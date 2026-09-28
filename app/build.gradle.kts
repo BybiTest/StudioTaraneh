@@ -5,7 +5,16 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-android { namespace = "com.studiotaraneh.app"; compileSdk = 35
+android {
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
+
+  kotlinOptions {
+    jvmTarget = "17"
+  }
+ namespace = "com.studiotaraneh.app"; compileSdk = 35
     defaultConfig { applicationId = "com.studiotaraneh.app"; minSdk = 26; targetSdk = 35; versionCode = 15; versionName = "1.5.0" }
     val keystorePath = System.getenv("KEYSTORE_FILE")
     val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
