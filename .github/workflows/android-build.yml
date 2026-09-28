@@ -20,10 +20,12 @@ jobs:
         with:
           gradle-version: 8.10.2
       - name: Prepare release signing (optional)
-        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
         env:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-        run: echo "$KEYSTORE_B64" | base64 --decode > "$GITHUB_WORKSPACE/release.keystore"
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 --decode > "$GITHUB_WORKSPACE/release.keystore"
+          fi
       - name: Build debug APK
         run: gradle :app:assembleDebug
       - name: Build release APK and AAB
