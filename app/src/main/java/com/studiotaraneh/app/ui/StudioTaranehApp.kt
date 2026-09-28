@@ -1,3 +1,4 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 package com.studiotaraneh.app.ui
 
 import android.Manifest
@@ -490,7 +491,7 @@ private fun formatTimelineTime(seconds:Double):String { val total=seconds.toLong
     Column(verticalArrangement=Arrangement.spacedBy(7.dp)){
         Row(verticalAlignment=Alignment.CenterVertically){
             Box(Modifier.size(18.dp).background(Color(s.color)))
-            Text(s.title,fontWeight=FontWeight.Bold,Modifier.weight(1f))
+            Text(s.title, modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
             IconButton(onSelected){Icon(Icons.Default.Mic,"اتصال ضبط به این بخش")}
             IconButton({vm.undoSection(s)}){Icon(Icons.Default.Undo,"Undo")}
             IconButton({vm.redoSection(s)}){Icon(Icons.Default.Redo,"Redo")}
@@ -754,7 +755,10 @@ item{Text("سازنده: سیدحمید موسوی زاده\nنسخه 1.5.0\nAI:
             }
 
             item {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), Modifier.fillMaxWidth()) {
+                Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.spacedBy(8.dp)
+) {
                     Button(
                         { running = !running },
                         Modifier.weight(1f)
