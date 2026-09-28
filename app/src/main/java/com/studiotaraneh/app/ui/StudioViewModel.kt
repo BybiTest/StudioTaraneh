@@ -24,7 +24,7 @@ class StudioViewModel(app: Application) : AndroidViewModel(app) {
     val favorites = db.songs().favorites().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val recent = db.songs().recent(20).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val trash = db.songs().trash().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-    fun createSong(title:String, style:String, bpm:Int=90, meter:String="4/4", onCreated:(Long)->Unit) = viewModelScope.launch { val id=db.songs().insert(SongEntity(title.ifBlank{"ترانه بدون عنوان"}, style=style, bpm=bpm, timeSignature=meter)); db.sections().insert(SectionEntity(songId=id,position=0,type="INTRO",title="Intro")); saveVersion(id); onCreated(id) }
+    fun createSong(title:String, style:String, bpm:Int=90, meter:String="4/4", onCreated:(Long)->Unit) = viewModelScope.launch { val id=db.songs().insert(SongEntity(title=title.ifBlank{"ترانه بدون عنوان"}, style=style, bpm=bpm, timeSignature=meter)); db.sections().insert(SectionEntity(songId=id,position=0,type="INTRO",title="Intro")); saveVersion(id); onCreated(id) }
     fun song(id:Long)=flow { emit(db.songs().get(id)) }
     fun markSongOpened(id: Long) = viewModelScope.launch { db.songs().markOpened(id) }
     fun updateSong(song:SongEntity, snapshot:Boolean=true)=viewModelScope.launch { db.songs().update(song.copy(updatedAt=System.currentTimeMillis())); if(snapshot) saveVersion(song.id) }

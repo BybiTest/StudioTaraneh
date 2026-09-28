@@ -40,6 +40,7 @@ import com.studiotaraneh.app.audio.DrumEngine
 import com.studiotaraneh.app.data.*
 import com.studiotaraneh.app.ui.theme.StudioTaranehTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import org.json.JSONArray
 import org.json.JSONObject
@@ -73,6 +74,16 @@ import java.io.InputStreamReader
 }
 
 @Composable private fun Splash(done:()->Unit) { LaunchedEffect(Unit){delay(3000);done()}; Box(Modifier.fillMaxSize(),Alignment.Center){Column(horizontalAlignment=Alignment.CenterHorizontally){Text("STUDIO TARANEH",style=MaterialTheme.typography.headlineMedium,fontWeight=FontWeight.Bold);Text("استودیو ترانه");Spacer(Modifier.height(10.dp));Text("سیدحمید موسوی زاده");Text("نسخه 1.5.0")}} }
+
+@Composable
+private fun HomeButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(text)
+    }
+}
 
 @Composable private fun Home(onSongs:()->Unit,onNew:()->Unit,onRhythm:()->Unit,onTrash:()->Unit,onSettings:()->Unit,onBackup:()->Unit,onFavorites:()->Unit,onRecent:()->Unit,onAbout:()->Unit,onPrivacy:()->Unit,onTerms:()->Unit){
     Scaffold(topBar={TopAppBar(title={Text("استودیو ترانه")})}){p->LazyColumn(Modifier.padding(p).padding(20.dp),verticalArrangement=Arrangement.spacedBy(10.dp)){
@@ -374,7 +385,7 @@ private fun RecordingControlCard(
     fun startOrResume(){
         runCatching{
             if(player==null){
-                player=MediaPlayer().apply{setDataSource(context,r.path);prepare();duration=this.duration;setOnCompletionListener{playing=false;position=0};seekTo(position);start()}
+                player=MediaPlayer().apply{setDataSource(context,Uri.parse(r.path));prepare();duration=this.duration;setOnCompletionListener{playing=false;position=0};seekTo(position);start()}
             } else player!!.start()
             playing=true
         }
@@ -564,7 +575,7 @@ item{Text("سازنده: سیدحمید موسوی زاده\nنسخه 1.5.0\nAI:
     }
 }
 
-private fun Rhythm(onBack:()->Unit, vm:StudioViewModel = viewModel()) {
+@Composable private fun Rhythm(onBack:()->Unit, vm:StudioViewModel = viewModel()) {
     var bpm by remember { mutableIntStateOf(90) }
     var meter by remember { mutableStateOf("4/4") }
     var beats by remember { mutableIntStateOf(4) }
@@ -649,7 +660,7 @@ private fun Rhythm(onBack:()->Unit, vm:StudioViewModel = viewModel()) {
                         Text("Pattern Sequencer", style = MaterialTheme.typography.titleLarge)
                         Text("هر خانه یک Step است؛ Kick، Snare و Hi-Hat با صدای تولیدشده روی خود دستگاه پخش می‌شوند.")
                         Text("${bpm} BPM • ${beats} ضرب • تقسیم هر ضرب: ۴ Step")
-                        Slider(bpm.toFloat(), { bpm = it.toInt() }, 40f..220f)
+                        Slider(value=bpm.toFloat(), onValueChange={ bpm = it.toInt() }, valueRange=40f..220f)
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
                             OutlinedButton({
                                 val now = System.currentTimeMillis()
@@ -826,7 +837,7 @@ private fun Rhythm(onBack:()->Unit, vm:StudioViewModel = viewModel()) {
     Card(Modifier.fillMaxWidth()){ Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){
         Text("مترونوم مستقل",style=MaterialTheme.typography.titleMedium)
         Text("${bpm} BPM • ضرب ${beat+1}",style=MaterialTheme.typography.bodySmall)
-        Slider(bpm.toFloat(),{onBpmChange(it.toInt())},40f..220f)
+        Slider(value=bpm.toFloat(), onValueChange={ onBpmChange(it.toInt()) }, valueRange=40f..220f)
         Button({running=!running},Modifier.fillMaxWidth()){Icon(if(running)Icons.Default.Stop else Icons.Default.PlayArrow,null);Spacer(Modifier.width(6.dp));Text(if(running)"توقف مترونوم" else "شروع مترونوم")}
     }}
 }
